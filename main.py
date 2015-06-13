@@ -1,4 +1,4 @@
-import uuid
+import service
 from flask import Flask
 from flask import request
 from flask import jsonify
@@ -7,16 +7,12 @@ app = Flask(__name__)
 app.debug = True
 
 
-def random_id_object():
-    return {'id': uuid.uuid4()}
-
-
 @app.route('/create_requester_session', methods=['POST'])
 def create_requester_session():
     amount = request.args.get('amount')
     account = request.args.get('account')
 
-    _id = random_id_object()
+    _id = service.create_requester_session()
     return jsonify(**_id)
 
 
@@ -26,7 +22,7 @@ def create_giver_session():
     max_range = request.args.get('max_range')
     sepa = request.args.get('sepa')
 
-    _id = random_id_object()
+    _id = service.create_giver_session()
     return jsonify(**_id)
 
 
@@ -51,6 +47,12 @@ def saw_request():
     giver_id = request.args.get('id')
     requester_id = request.args.get('requester_id')
 
+    valid_giver_id = service.giver_session_exists(giver_id)
+    valid_requester_id = service.requester_session_exists(requester_id)
+
+    if not (valid_giver_id and valid_requester_id):
+        return '', 400
+
     return ''
 
 
@@ -58,6 +60,12 @@ def saw_request():
 def accept_request():
     giver_id = request.args.get('id')
     requester_id = request.args.get('requester_id')
+
+    valid_giver_id = service.giver_session_exists(giver_id)
+    valid_requester_id = service.requester_session_exists(requester_id)
+
+    if not (valid_giver_id and valid_requester_id):
+        return '', 400
 
     return ''
 
@@ -67,19 +75,39 @@ def reject_request():
     giver_id = request.args.get('id')
     requester_id = request.args.get('requester_id')
 
+    valid_giver_id = service.giver_session_exists(giver_id)
+    valid_requester_id = service.requester_session_exists(requester_id)
+
+    if not (valid_giver_id and valid_requester_id):
+        return '', 400
+
     return ''
 
 
-@app.route('/bump', methods=['POST'])
-def bump():
-    bumper_id = request.args.get('id')
+@app.route('/requester_bump', methods=['POST'])
+def requester_bump():
     requester_id = request.args.get('requester_id')
-    giver_id = request.args.get('giver_id')
+    giver_token = request.args.get('giver_token')
 
-    if requester_id is None:
-        return ''
-    else:
-        return ''
+    valid_requester_id = service.requester_session_exists(requester_id)
+
+    if not(valid_requester_id):
+        return '', 400
+
+    return
+
+
+@app.route('/giver_bump', methods=['POST'])
+def giver_bump():
+    giver_id = request.args.get('giver_id')
+    requester_token = request.args.get('requester_token')
+
+    valid_giver_id = service.giver_session_exists(giver_id)
+
+    if not(valid_giver_id):
+        return '', 400
+
+    return
 
 
 if __name__ == '__main__':
