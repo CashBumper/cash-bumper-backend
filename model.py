@@ -26,14 +26,19 @@ def random_id():
 # MODEL
 
 ## REQUESTER
-def make_requester(id, latitude, longitude, transaction_id, account, amount, range):
+def make_requester(id, latitude, longitude, transaction_id, card_number,
+                   expiry_month, expiry_year, cvc, amount, range):
     return {
         'id': id,
         'latitude': latitude,
         'longitude': longitude,
         'transaction_id': transaction_id,
-        'account': account,
-        'amount': amount
+        'card_number': card_number,
+        'expiry_month': expiry_month,
+        'expiry_year': expiry_year,
+        'cvc': cvc,
+        'amount': amount,
+        'range': range
     }
 
 def save_requester(requester):
@@ -46,10 +51,12 @@ def load_all_requesters():
     return matching('requester.*')
 
 ## TRANSACTION
-def make_transaction(id, requester_id, state='UNSEEN'):
+def make_transaction(id, requester_id, giver_id, amount, state='UNSEEN'):
     return {
         'id': id,
         'requester_id': requester_id,
+        'giver_id': giver_id,
+        'amount': amount,
         'state': state
     }
 
@@ -81,7 +88,8 @@ def save_giver(giver):
     setex('giver.' + giver['id'], serialize(giver))
 
 def load_giver(id):
+    print 'giver.' + id
     return deserialize(r.get('giver.' + id))
 
 def load_all_givers():
-    return matching('givers.*')
+    return matching('giver.*')

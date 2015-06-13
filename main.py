@@ -13,10 +13,15 @@ app.debug = True
 
 @app.route('/create_requester_session', methods=['POST'])
 def create_requester_session():
-    amount    = request.args.get('amount')
-    range     = request.args.get('range')
-    account   = request.args.get('account')
-    requester = service.initiate_requester(amount, range, account)
+    card_number  = request.args.get('card_number')
+    expiry_month = request.args.get('expiry_month')
+    expiry_year  = request.args.get('expiry_year')
+    cvc          = request.args.get('cvc')
+    amount       = request.args.get('amount')
+    range        = request.args.get('range')
+
+    requester = service.initiate_requester(card_number, expiry_month,
+                                           expiry_year, cvc, amount, range)
 
     return stringify(requester)
 
@@ -51,32 +56,20 @@ def find_requesters_near():
     return stringify({'requesters': requesters})
 
 
-@app.route('/saw_request', methods=['GET'])
-def saw_request():
-    requester_id = request.args.get('requester_id')
-    service.set_transaction_state(requester_id, 'SEEN')
-    return
-
-
 @app.route('/accept_request', methods=['GET'])
 def accept_request():
     requester_id = request.args.get('requester_id')
-    service.set_transaction_state(requester_id, 'ACCEPTED')
-    return
-
-
-@app.route('/reject_request', methods=['GET'])
-def reject_request():
-    requester_id = request.args.get('requester_id')
-    service.set_transaction_state(requester_id, 'REJECTED')
-    return
+    giver_id     = request.args.get('giver_id')
+    service.accept_request(requester_id, giver_id)
+    return ''
 
 
 @app.route('/bump', methods=['POST'])
 def bump():
     requester_id = request.args.get('requester_id')
     service.set_transaction_state(requester_id, 'CONFIRMED')
-    return
+    service.transfer_to_giver(requester_id)
+    return ''
 
 
 if __name__ == '__main__':

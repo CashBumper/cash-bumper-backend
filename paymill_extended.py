@@ -1,5 +1,6 @@
 import paymill
 import requests
+import model
 
 PUBKEY = '95483231163ca57c2678ee1c32e220a9'
 PRIVKEY = 'c1639092ab86cb87d83b6b9118fe1e41'
@@ -15,6 +16,8 @@ def create_token(number, expiry_month, expiry_year, cvc, holdername, amount, cur
         'presentation.amount3D': amount,
         'presentation.currency3D': currency
     })
+
+    print r.json()
 
     return r.json()['transaction']['identification']['uniqueId']
 
