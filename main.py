@@ -1,34 +1,79 @@
-#! /usr/bin/env python
 
-import paymill
-import requests
+from flask import Flask
+from flask import request
 
-PUBKEY = '95483231163ca57c2678ee1c32e220a9'
-PRIVKEY = 'c1639092ab86cb87d83b6b9118fe1e41'
+app = Flask(__name__)
+app.debug = True
 
-def create_token(number, expiry_month, expiry_year, cvc, holdername, amount, currency):
-    r = requests.get('https://test-token.paymill.de', params={
-        'transaction.mode': 'CONNECTOR_TEST',
-        'channel.id': PUBKEY,
-        'account.number': number,
-        'account.expiry.month': expiry_month,
-        'account.expiry.year': expiry_year,
-        'account.holder': holdername,
-        'presentation.amount3D': amount,
-        'presentation.currency3D': currency
-    })
 
-    return r.json()['transaction']['identification']['uniqueId']
+@app.route('/create_requester_session', methods=['POST'])
+def create_requester_session():
+    amount = request.args.get('amount')
+    account = request.args.get('account')
 
-paymill_context = paymill.PaymillContext(PRIVKEY)
-transaction_service = paymill_context.get_transaction_service()
+    return '/create_requester_session?amount=%s&account=%s' % (amount, account)
 
-amount = 10000
 
-token = create_token('4111111111111111', '02', '2016', '111', 'Joe Doe', amount, 'EUR')
-ret = transaction_service.create_with_token(
-    token=token,
-    amount=amount,
-    currency='EUR',
-    description='It works!'
-)
+@app.route('/create_giver_session', methods=['POST'])
+def create_giver_session():
+    max_amount = request.args.get('max_amount')
+    max_range = request.args.get('max_range')
+    sepa = request.args.get('sepa')
+
+    return '/create_giver_session?max_amount=%s&max_range=%s&sepa=%s' % (max_amount, max_range, sepa)
+
+
+@app.route('/find_givers_around', methods=['GET'])
+def find_givers_around():
+    latitude = request.args.get('lat')
+    longitude = request.args.get('lng')
+
+    return '/find_givers_around?lat=%s&lng=%s' % (latitude, longitude)
+
+
+@app.route('/find_requesters_around', methods=['GET'])
+def find_requesters_around():
+    latitude = request.args.get('lat')
+    longitude = request.args.get('lng')
+
+    return '/find_requesters_around?lat=%s&lng=%s' % (latitude, longitude)
+
+
+@app.route('/saw_request', methods=['GET'])
+def saw_request():
+    giver_id = request.args.get('id')
+    requester_id = request.args.get('requester_id')
+
+    return '/saw_request?id=%s&requester_id=%s' % (giver_id, requester_id)
+
+
+@app.route('/accept_request', methods=['GET'])
+def accept_request():
+    giver_id = request.args.get('id')
+    requester_id = request.args.get('requester_id')
+
+    return '/accept_request?id=%s&requester_id=%s' % (giver_id, requester_id)
+
+
+@app.route('/reject_request', methods=['GET'])
+def reject_request():
+    giver_id = request.args.get('id')
+    requester_id = request.args.get('requester_id')
+
+    return '/reject_request?id=%s&requester_id=%s' % (giver_id, requester_id)
+
+
+@app.route('/bump', methods=['POST'])
+def bump():
+    bumper_id = request.args.get('id')
+    requester_id = request.args.get('requester_id')
+    giver_id = request.args.get('giver_id')
+
+    if requester_id is None:
+        return '/bump?bumper_id=%s&giver_id=%s' % (bumper_id, giver_id)
+    else:
+        return '/bump?bumper_id=%s&requester_id=%s' % (bumper_id, requester_id)
+
+
+if __name__ == '__main__':
+    app.run(host='172.20.19.51')
