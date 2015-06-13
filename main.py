@@ -45,12 +45,11 @@ def find_requesters_around():
 @app.route('/saw_request', methods=['GET'])
 def saw_request():
     giver_id = request.args.get('id')
-    requester_id = request.args.get('requester_id')
+    transaction_id = request.args.get('transaction_id')
 
     valid_giver_id = service.giver_session_exists(giver_id)
-    valid_requester_id = service.requester_session_exists(requester_id)
 
-    if not (valid_giver_id and valid_requester_id):
+    if not (valid_giver_id):
         return '', 400
 
     return ''
@@ -59,12 +58,11 @@ def saw_request():
 @app.route('/accept_request', methods=['GET'])
 def accept_request():
     giver_id = request.args.get('id')
-    requester_id = request.args.get('requester_id')
+    transaction_id = request.args.get('transaction_id')
 
     valid_giver_id = service.giver_session_exists(giver_id)
-    valid_requester_id = service.requester_session_exists(requester_id)
 
-    if not (valid_giver_id and valid_requester_id):
+    if not (valid_giver_id):
         return '', 400
 
     return ''
@@ -73,12 +71,11 @@ def accept_request():
 @app.route('/reject_request', methods=['GET'])
 def reject_request():
     giver_id = request.args.get('id')
-    requester_id = request.args.get('requester_id')
+    transaction_id = request.args.get('transaction_id')
 
     valid_giver_id = service.giver_session_exists(giver_id)
-    valid_requester_id = service.requester_session_exists(requester_id)
 
-    if not (valid_giver_id and valid_requester_id):
+    if not (valid_giver_id):
         return '', 400
 
     return ''
@@ -87,7 +84,7 @@ def reject_request():
 @app.route('/requester_bump', methods=['POST'])
 def requester_bump():
     requester_id = request.args.get('requester_id')
-    giver_token = request.args.get('giver_token')
+    transaction_id = request.args.get('transaction_id')
 
     valid_requester_id = service.requester_session_exists(requester_id)
 
@@ -100,7 +97,7 @@ def requester_bump():
 @app.route('/giver_bump', methods=['POST'])
 def giver_bump():
     giver_id = request.args.get('giver_id')
-    requester_token = request.args.get('requester_token')
+    transaction_id = request.args.get('transaction_id')
 
     valid_giver_id = service.giver_session_exists(giver_id)
 
