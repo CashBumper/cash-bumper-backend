@@ -4,10 +4,6 @@ import uuid
 
 # REDIS
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
-SESSION_TTL = 15 * 60
-
-def setex(key, val):
-    r.setex(key, SESSION_TTL, val)
 
 def matching(pattern):
     keys = r.keys(pattern)
@@ -42,7 +38,7 @@ def make_requester(id, latitude, longitude, transaction_id, card_number,
     }
 
 def save_requester(requester):
-    setex('requester.' + requester['id'], serialize(requester))
+    r.set('requester.' + requester['id'], serialize(requester))
 
 def load_requester(id):
     return deserialize(r.get('requester.' + id))
@@ -64,7 +60,7 @@ def make_transaction(id, requester_id, giver_id, amount, state='UNSEEN'):
     }
 
 def save_transaction(transaction):
-    setex('transaction.' + transaction['id'], serialize(transaction))
+    r.set('transaction.' + transaction['id'], serialize(transaction))
 
 def load_transaction(id):
     return deserialize(r.get('transaction.' + id))
@@ -88,7 +84,7 @@ def make_giver(id, latitude, longitude, amount, range, sepa):
     }
 
 def save_giver(giver):
-    setex('giver.' + giver['id'], serialize(giver))
+    r.set('giver.' + giver['id'], serialize(giver))
 
 def load_giver(id):
     print 'giver.' + id
