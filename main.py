@@ -29,6 +29,7 @@ def create_requester_session():
     requester = service.initiate_requester(card_number, expiry_month,
                                            expiry_year, cvc, amount, range)
 
+    print requester
     return stringify(requester)
 
 
@@ -39,6 +40,7 @@ def create_giver_session():
     sepa   = request.args.get('sepa')
     giver  = service.initialize_giver(amount, range, sepa)
 
+    print giver
     return stringify(giver)
 
 
@@ -50,6 +52,7 @@ def find_givers_near():
 
     givers       = service.find_givers_near(requester_id, latitude, longitude)
 
+    print givers
     return stringify({'givers': givers})
 
 
@@ -60,6 +63,7 @@ def find_requesters_near():
     giver_id   = request.args.get('giver_id')
     requesters = service.find_requesters_near(giver_id, latitude, longitude)
 
+    print requesters
     return stringify({'requesters': requesters})
 
 

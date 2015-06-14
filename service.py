@@ -59,8 +59,10 @@ def find_requesters_near(giver_id, latitude, longitude):
     all_requesters = model.load_all_requesters()
     positioned_requesters = filter(has_position, all_requesters)
     distance_enriched_requesters = map(add_travel_info, positioned_requesters)
+
     requesters_in_range = filter(lambda r: r['distance'] <= giver['range'],
                                  distance_enriched_requesters)
+
     requesters_under_amount = filter(lambda r: r['amount'] <= giver['amount'],
                                      requesters_in_range)
 
