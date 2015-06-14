@@ -7,9 +7,10 @@ import time
 gmaps = googlemaps.Client(key='AIzaSyDIfhg1xoQKqy2b0BheWqgMuVyFGgWJIkQ')
 
 def address_from_geocode(latitude, longitude):
+    print 'OLA', latitude, longitude
     return gmaps.reverse_geocode({
-        'lat':latitude,
-        'lng':longitude
+        'lat':float(latitude),
+        'lng':float(longitude)
     })[0]['formatted_address']
 
 def find_distance(start, end):
@@ -23,4 +24,4 @@ def find_distance(start, end):
     meters = directions[0]['legs'][0]['distance']['value']
     seconds = directions[0]['legs'][0]['duration']['value']
 
-    return {'meters': meters, 'seconds': seconds}
+    return {'distance': meters, 'duration': seconds}

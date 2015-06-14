@@ -14,6 +14,9 @@ def make_add_travel_info(latitude, longitude):
 
     return add_travel_info
 
+def has_position(o):
+    return o['latitude'] != 0 and o['longitude'] != 0
+
 def initiate_requester(card_number, expiry_month, expiry_year, cvc, amount,
                        range):
     transaction_id = model.random_id()
@@ -54,7 +57,8 @@ def find_requesters_near(giver_id, latitude, longitude):
     add_travel_info = make_add_travel_info(latitude, longitude)
 
     all_requesters = model.load_all_requesters()
-    distance_enriched_requesters = map(add_travel_info, all_requesters)
+    positioned_requesters = filter(has_position, all_requesters)
+    distance_enriched_requesters = map(add_travel_info, positioned_requesters)
     requesters_in_range = filter(lambda r: r['distance'] <= giver['range'],
                                  distance_enriched_requesters)
     requesters_under_amount = filter(lambda r: r['amount'] <= giver['amount'],
@@ -70,10 +74,11 @@ def find_givers_near(requester_id, latitude, longitude):
     add_travel_info = make_add_travel_info(latitude, longitude)
 
     all_givers = model.load_all_givers()
-    distance_enriched_givers = map(add_travel_info, all_givers)
+    positioned_givers = filter(has_position, all_givers)
+    distance_enriched_givers = map(add_travel_info, positioned_givers)
     givers_in_range = filter(lambda g: g['distance'] <= requester['range'],
                              distance_enriched_givers)
-    givers_over_amount = filter(lambda g: g['amount'] >= giver['amount'],
+    givers_over_amount = filter(lambda g: g['amount'] >= requester['amount'],
                                givers_in_range)
 
     return givers_over_amount

@@ -41,6 +41,7 @@ def find_givers_near():
     latitude     = request.args.get('lat')
     longitude    = request.args.get('lng')
     requester_id = request.args.get('requester_id')
+
     givers       = service.find_givers_near(requester_id, latitude, longitude)
 
     return stringify({'givers': givers})
