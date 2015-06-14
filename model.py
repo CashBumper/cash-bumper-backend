@@ -50,6 +50,9 @@ def load_requester(id):
 def load_all_requesters():
     return matching('requester.*')
 
+def delete_requester(id):
+    r.delete('requester.' + id)
+
 ## TRANSACTION
 def make_transaction(id, requester_id, giver_id, amount, state='UNSEEN'):
     return {
@@ -93,3 +96,6 @@ def load_giver(id):
 
 def load_all_givers():
     return matching('giver.*')
+
+def delete_giver(id):
+    r.delete('giver.' + id)

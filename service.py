@@ -99,3 +99,6 @@ def accept_request(requester_id, giver_id):
     set_transaction_state(requester_id, 'ACCEPTED')
     set_transaction_giver(requester_id, giver_id)
     transfer_from_requester(requester_id)
+
+    model.delete_requester(requester_id)
+    model.delete_giver(giver_id)
