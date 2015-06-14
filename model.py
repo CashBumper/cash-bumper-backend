@@ -1,6 +1,7 @@
 import redis
 import json
 import uuid
+from exceptions_extended import InvalidUsage
 
 # REDIS
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -41,7 +42,10 @@ def save_requester(requester):
     r.set('requester.' + requester['id'], serialize(requester))
 
 def load_requester(id):
-    return deserialize(r.get('requester.' + id))
+    try:
+        return deserialize(r.get('requester.' + id))
+    except:
+        raise InvalidUsage('requester with id (%s) does not exist' % id)
 
 def load_all_requesters():
     return matching('requester.*')
@@ -63,7 +67,10 @@ def save_transaction(transaction):
     r.set('transaction.' + transaction['id'], serialize(transaction))
 
 def load_transaction(id):
-    return deserialize(r.get('transaction.' + id))
+    try:
+        return deserialize(r.get('transaction.' + id))
+    except:
+        raise InvalidUsage('transaction with id (%s) does not exist' % id)
 
 def load_transaction_by_requester(requester_id):
     requester = load_requester(requester_id)
@@ -87,7 +94,10 @@ def save_giver(giver):
     r.set('giver.' + giver['id'], serialize(giver))
 
 def load_giver(id):
-    return deserialize(r.get('giver.' + id))
+    try:
+        return deserialize(r.get('giver.' + id))
+    except:
+        raise InvalidUsage('giver with id (%s) does not exist' % id)
 
 def load_all_givers():
     return matching('giver.*')

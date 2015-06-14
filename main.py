@@ -1,4 +1,5 @@
 import service
+from exceptions_extended import InvalidUsage
 
 from flask import Flask
 from flask import request
@@ -10,6 +11,11 @@ def stringify(dic):
 app = Flask(__name__)
 app.debug = True
 
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
 
 @app.route('/create_requester_session', methods=['POST'])
 def create_requester_session():
