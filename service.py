@@ -1,6 +1,18 @@
 import model
 import paymill_extended
 import figo_extended
+import google_extended
+
+def make_add_travel_info(latitude, longitude):
+    def add_travel_info(r):
+        travel = google_extended.find_distance((latitude, longitude),
+                                               (r['latitude'], r['longitude']))
+        r['distance'] = travel['distance']
+        r['duration'] = travel['duration']
+
+        return r
+
+    return add_travel_info
 
 def initiate_requester(card_number, expiry_month, expiry_year, cvc, amount,
                        range):
@@ -39,14 +51,28 @@ def find_requesters_near(giver_id, latitude, longitude):
     update_location(giver, latitude, longitude)
     model.save_giver(giver)
 
-    return model.load_all_requesters()
+    add_travel_info = make_add_travel_info(latitude, longitude)
+
+    all_requesters = model.load_all_requesters()
+    distance_enriched_requesters = map(add_travel_info, all_requesters)
+    requesters_in_range = filter(lambda r: r['distance'] <= giver['range'])
+    requesters_under_amount = filter(lambda r: r['amount'] <= giver['amount'])
+
+    return requesters_under_amount
 
 def find_givers_near(requester_id, latitude, longitude):
     requester = model.load_requester(requester_id)
     update_location(requester, latitude, longitude)
     model.save_requester(requester)
 
-    return model.load_all_givers()
+    add_travel_info = make_add_travel_info(latitude, longitude)
+
+    all_givers = model.load_all_givers()
+    distance_enriched_givers = map(add_travel_info, all_givers)
+    givers_in_range = filter(lambda g: g['distance'] <= requester['range'])
+    givers_over_amount = filter(lambda g: g['amount'] >= giver['amount'])
+
+    return givers_over_amount
 
 def transfer_from_requester(requester_id):
     requester = model.load_requester(requester_id)

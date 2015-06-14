@@ -10,8 +10,11 @@ def address_from_geocode(latitude, longitude):
         'lng':longitude
     })[0]['formatted_address']
 
-def find_distance_between_two_lats(start_lat, startlng, end_lat, end_lng):
+def find_distance(start, end):
     gmaps = googlemaps.Client(key='AIzaSyDIfhg1xoQKqy2b0BheWqgMuVyFGgWJIkQ')
+
+    (start_lat, start_lng) = start
+    (end_lat, end_lng)     = end
 
     start_address = address_from_geocode(start_lat, start_lng)
     end_address = address_from_geocode(end_lat, end_lng)
