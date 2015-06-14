@@ -1,4 +1,5 @@
 import service
+import model
 from exceptions_extended import InvalidUsage
 
 from flask import Flask
@@ -74,6 +75,14 @@ def accept_request():
     service.accept_request(requester_id, giver_id)
     return ''
 
+@app.route('/is_requester_transaction_accepted', methods=['GET'])
+def requester_transaction():
+    requester_id = request.args.get('requester_id')
+    transaction = model.load_transaction_by_requester(requester_id)
+    is_accepted = not (transaction.giver_id is None)
+
+    print is_accepted
+    return {'accepted': is_accepted}
 
 @app.route('/bump', methods=['POST'])
 def bump():
