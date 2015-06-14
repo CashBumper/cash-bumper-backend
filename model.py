@@ -87,7 +87,6 @@ def save_giver(giver):
     r.set('giver.' + giver['id'], serialize(giver))
 
 def load_giver(id):
-    print 'giver.' + id
     return deserialize(r.get('giver.' + id))
 
 def load_all_givers():
