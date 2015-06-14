@@ -69,6 +69,7 @@ def bump():
     requester_id = request.args.get('requester_id')
     service.set_transaction_state(requester_id, 'CONFIRMED')
     service.transfer_to_giver(requester_id)
+    service.clean_up(requester_id)
     return ''
 
 
