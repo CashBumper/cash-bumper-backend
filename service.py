@@ -63,7 +63,7 @@ def find_requesters_near(giver_id, latitude, longitude):
     requesters_in_range = filter(lambda r: r['distance'] <= giver['range'],
                                  distance_enriched_requesters)
 
-    requesters_under_amount = filter(lambda r: r['amount'] <= giver['amount'],
+    requesters_under_amount = filter(lambda r: int(r['amount']) <= int(giver['amount']),
                                      requesters_in_range)
 
     return requesters_under_amount
@@ -78,9 +78,11 @@ def find_givers_near(requester_id, latitude, longitude):
     all_givers = model.load_all_givers()
     positioned_givers = filter(has_position, all_givers)
     distance_enriched_givers = map(add_travel_info, positioned_givers)
+
     givers_in_range = filter(lambda g: g['distance'] <= requester['range'],
                              distance_enriched_givers)
-    givers_over_amount = filter(lambda g: g['amount'] >= requester['amount'],
+
+    givers_over_amount = filter(lambda g: int(g['amount']) >= int(requester['amount']),
                                givers_in_range)
 
     return givers_over_amount
