@@ -73,7 +73,7 @@ def accept_request():
     requester_id = request.args.get('requester_id')
     giver_id     = request.args.get('giver_id')
     service.accept_request(requester_id, giver_id)
-    return ''
+    return stringify(dict())
 
 @app.route('/get_requester_transaction_giver', methods=['GET'])
 def requester_transaction():
@@ -90,7 +90,7 @@ def bump():
     service.set_transaction_state(requester_id, 'CONFIRMED')
     service.transfer_to_giver(requester_id)
     service.clean_up(requester_id)
-    return ''
+    return stringify(dict())
 
 
 if __name__ == '__main__':
