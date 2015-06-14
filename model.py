@@ -79,6 +79,9 @@ def load_transaction_by_requester(requester_id):
 def load_all_transactions():
     return matching('transactions.*')
 
+def delete_transaction(id):
+    r.delete('transaction.' + id)
+
 ## GIVER
 def make_giver(id, latitude, longitude, amount, range, sepa):
     return {

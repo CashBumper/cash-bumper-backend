@@ -114,6 +114,7 @@ def accept_request(requester_id, giver_id):
     transfer_from_requester(requester_id)
 
 def clean_up(requester_id):
-    transaction = model.transfer_from_requester(requester_id)
+    transaction = model.load_transaction_by_requester(requester_id)
     model.delete_requester(requester_id)
     model.delete_giver(transaction['giver_id'])
+    model.delete_transaction(transaction['id'])

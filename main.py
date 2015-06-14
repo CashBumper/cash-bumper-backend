@@ -79,10 +79,10 @@ def accept_request():
 def requester_transaction():
     requester_id = request.args.get('requester_id')
     transaction  = model.load_transaction_by_requester(requester_id)
-    giver        = model.load_giver(transaction.giver_id)
+    giver        = model.load_giver(transaction['giver_id'])
 
     print giver
-    return giver
+    return stringify(giver)
 
 @app.route('/bump', methods=['POST'])
 def bump():
@@ -94,4 +94,4 @@ def bump():
 
 
 if __name__ == '__main__':
-    app.run(host='172.20.19.51')
+    app.run(host='172.20.19.51', port=5001)
