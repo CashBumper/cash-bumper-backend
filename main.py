@@ -75,14 +75,14 @@ def accept_request():
     service.accept_request(requester_id, giver_id)
     return ''
 
-@app.route('/is_requester_transaction_accepted', methods=['GET'])
+@app.route('/get_requester_transaction_giver', methods=['GET'])
 def requester_transaction():
     requester_id = request.args.get('requester_id')
-    transaction = model.load_transaction_by_requester(requester_id)
-    is_accepted = not (transaction.giver_id is None)
+    transaction  = model.load_transaction_by_requester(requester_id)
+    giver        = model.load_giver(transaction.giver_id)
 
-    print is_accepted
-    return {'accepted': is_accepted}
+    print giver
+    return giver
 
 @app.route('/bump', methods=['POST'])
 def bump():
